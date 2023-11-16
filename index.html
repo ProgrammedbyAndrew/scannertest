@@ -8,100 +8,10 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background-color: #D32F2F;a<!DOCTYPE html>
-<html>
-<head>
-    <title>World Food Trucks - Scan Rewards</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
             background-color: #D32F2F;
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            overflow: hidden;
-        }
-
-        #reader {
-            width: 100%;
-            height: 100%;
-        }
-
-        #result {
-            font-size: 2em;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            display: none;
-            z-index: 2; /* Ensure it's above the trucks */
-        }
-
-        .truck {
-            font-size: 3em;
-            position: absolute;
-            bottom: 10%; /* Position at the bottom of the result div */
-            animation: moveTruck 10s linear infinite;
-        }
-
-        @keyframes moveTruck {
-            0% { left: -100px; }
-            100% { left: 100%; }
-        }
-    </style>
-</head>
-<body>
-    <div id="reader"></div>
-    <div id="result"></div>
-    <div class="truck" style="animation-delay: 0s;">🚚</div>
-    <div class="truck" style="animation-delay: 3s;">🚚</div>
-    <div class="truck" style="animation-delay: 6s;">🚚</div>
-
-    <script>
-        function onScanSuccess(decodedText, decodedResult) {
-            var roundedPoints = Math.ceil(parseFloat(decodedText));
-            var totalPoints = Math.floor(Math.random() * 1000) + 1; // Random total points
-            var resultElement = document.getElementById('result');
-            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
-            resultElement.style.display = 'block';
-            html5QrcodeScanner.clear();
-        }
-
-        function onCameraSelected(cameraId) {
-            html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
-        }
-
-        var html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
-            false
-        );
-
-        Html5Qrcode.getCameras().then(cameras => {
-            if (cameras && cameras.length) {
-                var cameraId = cameras[0].id;
-                cameras.forEach(camera => {
-                    if (camera.facingMode === "environment") {
-                        cameraId = camera.id;
-                    }
-                });
-                onCameraSelected(cameraId);
-            }
-        }).catch(err => {
-            console.error("Error getting cameras", err);
-        });
-    </script>
-</body>
-</html>
-
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            overflow: hidden;
         }
 
         #reader {
@@ -119,32 +29,28 @@
             display: none;
         }
 
-        .truck {
-            font-size: 3em;
-            position: absolute;
-            animation: moveTruck 10s linear infinite;
+        @keyframes colorChange {
+            0% { color: #FFEB3B; }
+            25% { color: #4CAF50; }
+            50% { color: #2196F3; }
+            75% { color: #FF9800; }
+            100% { color: #9C27B0; }
         }
 
-        @keyframes moveTruck {
-            0% { left: -100px; }
-            100% { left: 100%; }
+        @keyframes scale {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
         }
     </style>
 </head>
 <body>
     <div id="reader"></div>
     <div id="result"></div>
-    <div class="truck" style="top: 20%;">🚚</div>
-    <div class="truck" style="top: 40%; animation-delay: 2s;">🚚</div>
-    <div class="truck" style="top: 60%; animation-delay: 4s;">🚚</div>
-    <div class="truck" style="top: 80%; animation-delay: 6s;">🚚</div>
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            var roundedPoints = Math.ceil(parseFloat(decodedText));
-            var totalPoints = Math.floor(Math.random() * 1000) + 1; // Random total points
             var resultElement = document.getElementById('result');
-            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
+            resultElement.innerText = decodedText + ' Reward Points Redeemed!';
             resultElement.style.display = 'block';
             html5QrcodeScanner.clear();
         }
@@ -161,7 +67,8 @@
 
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                var cameraId = cameras[0].id;
+                var cameraId = cameras[0].id; // Default to the first camera (usually the back camera on mobile devices)
+                // Use the facing mode to attempt to get the back camera
                 cameras.forEach(camera => {
                     if (camera.facingMode === "environment") {
                         cameraId = camera.id;
