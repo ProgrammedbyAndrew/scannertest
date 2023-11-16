@@ -11,11 +11,22 @@
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('result').innerText = 'Rewards Redeemed: ' + decodedText;
+            // Display success message
+            document.getElementById('result').innerText = decodedText + ' reward redeemed!';
+            // Stop the QR code scanner
+            html5QrcodeScanner.clear();
         }
 
+        // Create QR code scanner
         var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+
+        // Render the scanner and start it immediately
         html5QrcodeScanner.render(onScanSuccess);
+
+        // Optional: Redirect or perform another action after a delay
+        // setTimeout(() => {
+        //     window.location.href = 'some_other_page.html'; // Redirect to another page
+        // }, 3000); // 3 seconds delay
     </script>
 </body>
 </html>
