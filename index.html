@@ -8,16 +8,18 @@
             text-align: center;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
 
         #reader {
-            margin: 0 auto;
-            max-width: 100%;
+            width: 100%;
             height: auto;
         }
 
         #result {
-            font-size: 4em; /* Larger font size */
+            font-size: 4em;
             margin-top: 20px;
             display: none;
             animation: colorChange 3s infinite, scale 1s infinite alternate;
@@ -38,15 +40,14 @@
     </style>
 </head>
 <body>
-    <h1>Scan QR Code</h1>
-    <div id="reader" style="width:300px;height:300px;"></div>
+    <div id="reader"></div>
     <p id="result"></p>
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
             // Display success message with amount
             var resultElement = document.getElementById('result');
-            resultElement.innerText = '$' + decodedText + ' redeemed!';
+            resultElement.innerText = decodedText + ' Reward Points Redeemed!';
             resultElement.style.display = 'block';
 
             // Stop the QR code scanner
@@ -54,10 +55,17 @@
         }
 
         // Create QR code scanner
-        var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 10, qrbox: 250, aspectRatio: 1 },
+            /* verbose= */ false
+        );
+
+        // Choose the facing mode as environment for back camera
+        var cameraConfig = { facingMode: "environment" };
 
         // Render the scanner and start it immediately
-        html5QrcodeScanner.render(onScanSuccess);
+        html5QrcodeScanner.render(onScanSuccess, cameraConfig);
     </script>
 </body>
 </html>
