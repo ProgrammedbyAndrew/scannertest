@@ -8,19 +8,19 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background-color: #D32F2F; /* Brand red color */
-            color: white; /* White text */
+            background-color: #D32F2F;
+            color: white;
             font-family: Arial, sans-serif;
             text-align: center;
         }
 
         #reader {
             width: 100%;
-            height: 100%; /* Full height */
+            height: 100%;
         }
 
         #result {
-            font-size: 2em; /* Adjusted for better fit */
+            font-size: 2em;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -55,14 +55,30 @@
             html5QrcodeScanner.clear();
         }
 
+        function onCameraSelected(cameraId) {
+            html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
+        }
+
         var html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", 
             { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
             false
         );
 
-        var cameraConfig = { facingMode: "environment" };
-        html5QrcodeScanner.render(onScanSuccess, cameraConfig);
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                var cameraId = cameras[0].id; // Default to the first camera (usually the back camera on mobile devices)
+                // Use the facing mode to attempt to get the back camera
+                cameras.forEach(camera => {
+                    if (camera.facingMode === "environment") {
+                        cameraId = camera.id;
+                    }
+                });
+                onCameraSelected(cameraId);
+            }
+        }).catch(err => {
+            console.error("Error getting cameras", err);
+        });
     </script>
 </body>
 </html>
