@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scan Rewards</title>
+    <title>World Food Trucks - Scan Rewards</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #D32F2F; /* Brand red color */
+            color: white; /* White text */
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -16,6 +17,7 @@
         #reader {
             width: 100%;
             height: auto;
+            margin-top: 20px;
         }
 
         #result {
@@ -26,11 +28,11 @@
         }
 
         @keyframes colorChange {
-            0% { color: red; }
-            25% { color: blue; }
-            50% { color: green; }
-            75% { color: orange; }
-            100% { color: purple; }
+            0% { color: #FFEB3B; }
+            25% { color: #4CAF50; }
+            50% { color: #2196F3; }
+            75% { color: #FF9800; }
+            100% { color: #9C27B0; }
         }
 
         @keyframes scale {
@@ -40,31 +42,25 @@
     </style>
 </head>
 <body>
+    <h1>World Food Trucks Rewards</h1>
     <div id="reader"></div>
     <p id="result"></p>
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            // Display success message with amount
             var resultElement = document.getElementById('result');
             resultElement.innerText = decodedText + ' Reward Points Redeemed!';
             resultElement.style.display = 'block';
-
-            // Stop the QR code scanner
             html5QrcodeScanner.clear();
         }
 
-        // Create QR code scanner
         var html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", 
             { fps: 10, qrbox: 250, aspectRatio: 1 },
-            /* verbose= */ false
+            false
         );
 
-        // Choose the facing mode as environment for back camera
         var cameraConfig = { facingMode: "environment" };
-
-        // Render the scanner and start it immediately
         html5QrcodeScanner.render(onScanSuccess, cameraConfig);
     </script>
 </body>
