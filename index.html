@@ -4,32 +4,7 @@
     <title>World Food Trucks - Scan Rewards</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: #D32F2F;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        #reader {
-            width: 100%;
-            height: 100%;
-        }
-
-        #result {
-            font-size: 4em; /* Increased font size */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%; /* Adjusted width for better readability */
-            display: none;
-            text-align: center;
-        }
+        /* ... Your existing styles ... */
     </style>
 </head>
 <body>
@@ -37,29 +12,37 @@
     <div id="result"></div>
 
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
+        function onScanSuccess(decodedText) {
             var roundedPoints = Math.ceil(parseFloat(decodedText));
-            var totalPoints = Math.floor(Math.random() * 1000) + 1; // Random total points
+            var totalPoints = Math.floor(Math.random() * 1000) + 1;
             var resultElement = document.getElementById('result');
             resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
             resultElement.style.display = 'block';
             html5QrcodeScanner.clear();
         }
 
-        var html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
-            false
-        );
+        function onScanFailure(error) {
+            // handle scan failure, usually better to ignore and keep scanning.
+            console.warn(`QR code scan error: ${error}`);
+        }
 
+        let html5QrcodeScanner = new Html5Qrcode("reader");
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
                 var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
                 if (backCameraId) {
-                    html5QrcodeScanner.render(onScanSuccess, { deviceId: backCameraId });
+                    html5QrcodeScanner.start(
+                        backCameraId, 
+                        {
+                            fps: 10,
+                            qrbox: { width: window.innerWidth, height: window.innerHeight },
+                            aspectRatio: 1
+                        },
+                        onScanSuccess,
+                        onScanFailure
+                    );
                 } else {
-                    // If no back camera is found, use the first available camera
-                    html5QrcodeScanner.render(onScanSuccess, { deviceId: cameras[0].id });
+                    console.error("No back camera found!");
                 }
             }
         }).catch(err => {
