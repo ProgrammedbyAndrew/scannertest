@@ -15,8 +15,8 @@
             overflow: hidden;
         }
         #reader {
-            width: 750px; /* Increased width */
-            height: 750px; /* Increased height */
+            width: 300px;
+            height: 300px;
             margin: auto;
             position: relative;
             top: 50%;
@@ -28,7 +28,13 @@
     <div id="reader"></div>
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            window.location.href = 'rewards.html?points=' + encodeURIComponent(decodedText);
+            // Assuming the decodedText is in the format "dollars.cents"
+            const [dollars, cents] = decodedText.split('.').map(Number);
+            const totalAmount = dollars + (cents / 100);
+            const roundedPoints = Math.ceil(totalAmount);
+
+            // Redirect to rewards.html with the calculated points as a query parameter
+            window.location.href = 'rewards.html?points=' + encodeURIComponent(roundedPoints);
         }
 
         function onScanFailure(error) {
@@ -44,7 +50,7 @@
                 }
                 html5QrcodeScanner.start(backCameraId, {
                     fps: 10,
-                    qrbox: 500 // Adjusted qrbox size
+                    qrbox: 300
                 }, onScanSuccess, onScanFailure);
             }
         }).catch(err => {
