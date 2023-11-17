@@ -14,12 +14,16 @@
             overflow: hidden;
         }
         .reward-message {
-            font-size: 6em; /* Increased font size */
+            font-size: 4em; /* Adjusted font size */
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             animation: pulse 1s infinite alternate; /* Pulse animation */
+        }
+        .points {
+            font-weight: bold; /* Bold for emphasis */
+            color: white; /* White color for numbers */
         }
         @keyframes pulse {
             from {
@@ -51,7 +55,7 @@
             const totalPoints = 500; // A constant total points value
 
             document.getElementById('rewardMessage').innerHTML = 
-                roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
+                '<span class="points">' + roundedPoints + '</span> Reward Points Redeemed!<br>Your total points are now <span class="points">' + totalPoints + '</span> points.';
         };
     </script>
 </body>
