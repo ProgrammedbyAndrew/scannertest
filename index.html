@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,10 +38,15 @@
 </head>
 <body>
     <div id="reader"></div>
+    <div id="result"></div>
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            // Redirect to rewards.html with the scanned text as a query parameter
-            window.location.href = 'rewards.html?points=' + encodeURIComponent(decodedText);
+            var roundedPoints = Math.ceil(parseFloat(decodedText));
+            var totalPoints = Math.floor(Math.random() * 1000) + 1;
+            var resultElement = document.getElementById('result');
+            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
+            resultElement.style.display = 'block';
+            html5QrcodeScanner.clear();
         }
 
         function onScanFailure(error) {
@@ -73,14 +77,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
