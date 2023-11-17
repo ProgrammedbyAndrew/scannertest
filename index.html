@@ -26,20 +26,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
+            width: 80%; /* Adjusted width for better readability */
             display: none;
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+            text-align: center;
         }
     </style>
 </head>
@@ -54,7 +43,6 @@
             var resultElement = document.getElementById('result');
             resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
             resultElement.style.display = 'block';
-            resultElement.style.animation = 'pulse 1s infinite';
             html5QrcodeScanner.clear();
         }
 
