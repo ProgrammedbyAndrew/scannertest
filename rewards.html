@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rewards Redeemed</title>
+    <title>World Food Trucks - Scan Rewards</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body, html {
             margin: 0;
@@ -13,50 +14,54 @@
             text-align: center;
             overflow: hidden;
         }
-        .reward-message {
-            font-size: 4em; /* Adjusted font size */
-            position: absolute;
+        #reader {
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            position: relative;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse 1s infinite alternate; /* Pulse animation */
-        }
-        .points {
-            font-weight: bold; /* Bold for emphasis */
-            color: white; /* White color for numbers */
-        }
-        @keyframes pulse {
-            from {
-                transform: translate(-50%, -50%) scale(1);
-                color: #FFEB3B;
-            }
-            to {
-                transform: translate(-50%, -50%) scale(1.1);
-                color: #4CAF50;
-            }
-        }
-        @keyframes backgroundFade {
-            0% { background-color: #D32F2F; }
-            50% { background-color: #FFC107; }
-            100% { background-color: #D32F2F; }
-        }
-        body {
-            animation: backgroundFade 3s infinite;
+            transform: translateY(-50%);
         }
     </style>
 </head>
 <body>
-    <div class="reward-message" id="rewardMessage"></div>
+    <div id="reader"></div>
     <script>
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const points = urlParams.get('points');
-            const roundedPoints = Math.ceil(parseFloat(points));
-            const totalPoints = 500; // A constant total points value
+        function onScanSuccess(decodedText, decodedResult) {
+            // Assuming the decodedText is in the format "dollars.cents"
+            const [dollars, cents] = decodedText.split('.').map(Number);
+            const totalAmount = dollars + (cents / 100);
+            const roundedPoints = Math.ceil(totalAmount);
 
-            document.getElementById('rewardMessage').innerHTML = 
-                '<span class="points">' + roundedPoints + '</span> Reward Points Redeemed!<br>Your total points are now <span class="points">' + totalPoints + '</span> points.';
-        };
+            // Redirect to rewards.html with the calculated points as a query parameter
+            window.location.href = 'rewards.html?points=' + encodeURIComponent(roundedPoints);
+        }
+
+        function onScanFailure(error) {
+            // Handle scan failure, if needed
+        }
+
+        let html5QrcodeScanner = new Html5Qrcode("reader");
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
+                if (!backCameraId && cameras.length > 1) {
+                    backCameraId = cameras[cameras.length - 1].id;
+                }
+                html5QrcodeScanner.start(backCameraId, {
+                    fps: 10,
+                    qrbox: 300
+                }, onScanSuccess, onScanFailure);
+            }
+        }).catch(err => {
+            console.error("Error getting cameras", err);
+        });
+
+        window.addEventListener('unload', function() {
+            html5QrcodeScanner.stop().catch(err => {
+                console.error("Error stopping the camera", err);
+            });
+        });
     </script>
 </body>
 </html>
