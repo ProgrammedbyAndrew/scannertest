@@ -45,10 +45,6 @@
             html5QrcodeScanner.clear();
         }
 
-        function onCameraSelected(cameraId) {
-            html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
-        }
-
         var html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", 
             { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
@@ -57,18 +53,13 @@
 
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                var backCameraId = null;
-                // Loop through the cameras and select the back camera
-                for (let camera of cameras) {
-                    if (camera.label.toLowerCase().includes("back") || camera.facingMode === "environment") {
-                        backCameraId = camera.id;
-                        break;
-                    }
+                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
+                if (backCameraId) {
+                    html5QrcodeScanner.render(onScanSuccess, { deviceId: backCameraId });
+                } else {
+                    // If no back camera is found, use the first available camera
+                    html5QrcodeScanner.render(onScanSuccess, { deviceId: cameras[0].id });
                 }
-
-                // If a back camera is found, use it; otherwise, default to the first camera
-                backCameraId = backCameraId || cameras[0].id;
-                onCameraSelected(backCameraId);
             }
         }).catch(err => {
             console.error("Error getting cameras", err);
