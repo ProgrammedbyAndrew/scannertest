@@ -14,39 +14,22 @@
             text-align: center;
             overflow: hidden;
         }
-    
         #reader {
-            width: 300px; /* Adjusted width */
-            height: 300px; /* Adjusted height */
+            width: 300px;
+            height: 300px;
             margin: auto;
             position: relative;
             top: 50%;
             transform: translateY(-50%);
         }
-    
-        #result {
-            font-size: 4em;
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            display: none;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
     <div id="reader"></div>
-    <div id="result"></div>
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            var roundedPoints = Math.ceil(parseFloat(decodedText));
-            var totalPoints = Math.floor(Math.random() * 1000) + 1;
-            var resultElement = document.getElementById('result');
-            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
-            resultElement.style.display = 'block';
-            html5QrcodeScanner.clear();
+            // Redirect to rewards.html with the scanned text as a query parameter
+            window.location.href = 'rewards.html?points=' + encodeURIComponent(decodedText);
         }
 
         function onScanFailure(error) {
