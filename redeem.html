@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rewards Redeemed</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #D32F2F;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+        .reward-message {
+            font-size: 4em;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="reward-message" id="rewardMessage"></div>
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const points = urlParams.get('points');
+            const roundedPoints = Math.ceil(parseFloat(points));
+            const totalPoints = 500; // A constant total points value
+
+            document.getElementById('rewardMessage').innerHTML = 
+                roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
+        };
+    </script>
+</body>
+</html>
