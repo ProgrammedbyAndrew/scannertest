@@ -14,11 +14,30 @@
             overflow: hidden;
         }
         .reward-message {
-            font-size: 4em;
+            font-size: 6em; /* Increased font size */
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            animation: pulse 1s infinite alternate; /* Pulse animation */
+        }
+        @keyframes pulse {
+            from {
+                transform: translate(-50%, -50%) scale(1);
+                color: #FFEB3B;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1.1);
+                color: #4CAF50;
+            }
+        }
+        @keyframes backgroundFade {
+            0% { background-color: #D32F2F; }
+            50% { background-color: #FFC107; }
+            100% { background-color: #D32F2F; }
+        }
+        body {
+            animation: backgroundFade 3s infinite;
         }
     </style>
 </head>
