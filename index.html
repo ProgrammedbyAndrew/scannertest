@@ -77,29 +77,20 @@
         var html5Qrcode = new Html5Qrcode("reader");
         Html5Qrcode.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
-                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
-                if (backCameraId) {
-                    startScanner(backCameraId);
-                } else {
-                    // Fallback if no back camera is identified
-                    startScanner(cameras[0].id);
-                }
+                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id || cameras[0].id;
+                html5Qrcode.start(
+                  backCameraId, 
+                  {
+                      fps: 10,
+                      qrbox: { width: window.innerWidth, height: window.innerHeight }
+                  },
+                  onScanSuccess,
+                  onScanError
+                );
             }
         }).catch(function (err) {
             console.error("Error getting cameras", err);
         });
-
-        function startScanner(cameraId) {
-            html5Qrcode.start(
-              cameraId, 
-              {
-                  fps: 10,
-                  qrbox: { width: window.innerWidth, height: window.innerHeight }
-              },
-              onScanSuccess,
-              onScanError
-            );
-        }
     </script>
 </body>
 </html>
