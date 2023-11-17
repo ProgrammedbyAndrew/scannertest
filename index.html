@@ -12,6 +12,7 @@
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
+            overflow: hidden;
         }
 
         #reader {
@@ -29,28 +30,26 @@
             display: none;
         }
 
-        @keyframes colorChange {
-            0% { color: #FFEB3B; }
-            25% { color: #4CAF50; }
-            50% { color: #2196F3; }
-            75% { color: #FF9800; }
-            100% { color: #9C27B0; }
+        .truck {
+            font-size: 3em;
+            position: absolute;
+            animation: moveTruck 10s linear infinite;
         }
 
-        @keyframes scale {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+        @keyframes moveTruck {
+            0% { left: -100px; }
+            100% { left: 100%; }
         }
     </style>
 </head>
 <body>
-    <div id="reader"></div>
-    <div id="result"></div>
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
+            var roundedPoints = Math.ceil(parseFloat(decodedText));
+            var totalPoints = Math.floor(Math.random() * 1000) + 1; // Random total points
             var resultElement = document.getElementById('result');
-            resultElement.innerText = decodedText + ' Reward Points Redeemed!';
+            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
             resultElement.style.display = 'block';
             html5QrcodeScanner.clear();
         }
@@ -67,8 +66,7 @@
 
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                var cameraId = cameras[0].id; // Default to the first camera (usually the back camera on mobile devices)
-                // Use the facing mode to attempt to get the back camera
+                var cameraId = cameras[0].id;
                 cameras.forEach(camera => {
                     if (camera.facingMode === "environment") {
                         cameraId = camera.id;
