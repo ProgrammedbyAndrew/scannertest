@@ -28,7 +28,12 @@
     <div id="reader"></div>
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            // Assuming the decodedText is in the format "dollars.cents"
+            // Check if the decoded text is in a valid format (e.g., "150.23")
+            if (!/^\d+\.\d{2}$/.test(decodedText)) {
+                alert("Invalid QR code format. Please scan a QR code with the format 'dollars.cents'");
+                return;
+            }
+
             const [dollars, cents] = decodedText.split('.').map(Number);
             const totalAmount = dollars + (cents / 100);
             const roundedPoints = Math.ceil(totalAmount);
