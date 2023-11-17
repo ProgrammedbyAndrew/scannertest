@@ -12,6 +12,7 @@
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
+            overflow: hidden;
         }
 
         #reader {
@@ -27,56 +28,65 @@
             transform: translate(-50%, -50%);
             width: 100%;
             display: none;
+            z-index: 2;
         }
 
-        @keyframes colorChange {
-            0% { color: #FFEB3B; }
-            25% { color: #4CAF50; }
-            50% { color: #2196F3; }
-            75% { color: #FF9800; }
-            100% { color: #9C27B0; }
+        .truck {
+            font-size: 3em;
+            position: absolute;
+            bottom: 10%;
+            animation: moveTruck 10s linear infinite;
         }
 
-        @keyframes scale {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+        @keyframes moveTruck {
+            0% { left: -100px; }
+            100% { left: 100%; }
         }
     </style>
 </head>
 <body>
     <div id="reader"></div>
     <div id="result"></div>
+    <div class="truck" style="animation-delay: 0s;">🚚</div>
+    <div class="truck" style="animation-delay: 3s;">🚚</div>
+    <div class="truck" style="animation-delay: 6s;">🚚</div>
 
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
+        function onScanSuccess(decodedText) {
+            var roundedPoints = Math.ceil(parseFloat(decodedText));
+            var totalPoints = Math.floor(Math.random() * 1000) + 1;
             var resultElement = document.getElementById('result');
-            resultElement.innerText = decodedText + ' Reward Points Redeemed!';
+            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
             resultElement.style.display = 'block';
-            html5QrcodeScanner.clear();
+            html5Qrcode.stop();
         }
 
-        function onCameraSelected(cameraId) {
-            html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
+        function onScanError(errorMessage) {
+            // handle scan error
         }
 
-        var html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
-            false
-        );
-
-        Html5Qrcode.getCameras().then(cameras => {
-            if (cameras && cameras.length) {
-                var cameraId = cameras[0].id; // Default to the first camera (usually the back camera on mobile devices)
-                // Use the facing mode to attempt to get the back camera
-                cameras.forEach(camera => {
-                    if (camera.facingMode === "environment") {
-                        cameraId = camera.id;
+        var html5Qrcode = new Html5Qrcode("reader");
+        Html5Qrcode.getCameras().then(function (cameras) {
+            if (cameras.length > 0) {
+                var cameraId = cameras[0].id; // Default camera
+                // Prefer the back camera if available
+                for (var i = 0; i < cameras.length; i++) {
+                    if (cameras[i].facingMode === "environment") {
+                        cameraId = cameras[i].id;
+                        break;
                     }
-                });
-                onCameraSelected(cameraId);
+                }
+                html5Qrcode.start(
+                  cameraId, 
+                  {
+                      fps: 10,
+                      qrbox: { width: window.innerWidth, height: window.innerHeight }
+                  },
+                  onScanSuccess,
+                  onScanError
+                );
             }
-        }).catch(err => {
+        }).catch(function (err) {
             console.error("Error getting cameras", err);
         });
     </script>
