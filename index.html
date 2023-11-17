@@ -15,8 +15,8 @@
             overflow: hidden;
         }
         #reader {
-            width: 500px; /* Increased width */
-            height: 500px; /* Increased height */
+            width: 750px; /* Increased width */
+            height: 750px; /* Increased height */
             margin: auto;
             position: relative;
             top: 50%;
@@ -44,7 +44,7 @@
                 }
                 html5QrcodeScanner.start(backCameraId, {
                     fps: 10,
-                    qrbox: 250 // Adjusted qrbox size
+                    qrbox: 500 // Adjusted qrbox size
                 }, onScanSuccess, onScanFailure);
             }
         }).catch(err => {
