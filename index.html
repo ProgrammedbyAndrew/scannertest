@@ -60,7 +60,7 @@
             resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
             resultElement.style.display = 'block';
             showTrucks();
-            html5Qrcode.stop();
+            html5QrcodeScanner.clear();
         }
 
         function showTrucks() {
@@ -70,25 +70,24 @@
             }
         }
 
-        function onScanError(errorMessage) {
-            // handle scan error
-        }
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
+            false
+        );
 
-        var html5Qrcode = new Html5Qrcode("reader");
-        Html5Qrcode.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id || cameras[0].id;
-                html5Qrcode.start(
-                  backCameraId, 
-                  {
-                      fps: 10,
-                      qrbox: { width: window.innerWidth, height: window.innerHeight }
-                  },
-                  onScanSuccess,
-                  onScanError
-                );
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                var cameraId = cameras[0].id; // Default to the first camera
+                // Use the facing mode to attempt to get the back camera
+                cameras.forEach(camera => {
+                    if (camera.facingMode === "environment") {
+                        cameraId = camera.id;
+                    }
+                });
+                html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
             }
-        }).catch(function (err) {
+        }).catch(err => {
             console.error("Error getting cameras", err);
         });
     </script>
