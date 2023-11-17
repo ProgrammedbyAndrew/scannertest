@@ -16,8 +16,8 @@
         }
 
         #reader {
-            width: 300px; /* Adjusted width */
-            height: 300px; /* Adjusted height */
+            width: 100%; /* Full width */
+            height: auto; /* Maintain aspect ratio */
             margin: auto;
             position: relative;
             top: 50%;
@@ -57,10 +57,14 @@
         let html5QrcodeScanner = new Html5Qrcode("reader");
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id || cameras[0].id;
+                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
+                if (!backCameraId && cameras.length > 1) {
+                    // Assuming the last camera is the back camera if 'environment' mode is not specified
+                    backCameraId = cameras[cameras.length - 1].id;
+                }
                 html5QrcodeScanner.start(backCameraId, {
                     fps: 10,
-                    qrbox: { width: 250, height: 250 }
+                    qrbox: 250 // Scanning box size
                 }, onScanSuccess, onScanFailure);
             }
         }).catch(err => {
