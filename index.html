@@ -12,7 +12,6 @@
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            overflow: hidden;
         }
 
         #reader {
@@ -21,14 +20,26 @@
         }
 
         #result {
-            font-size: 4em; /* Increased font size */
+            font-size: 2em;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%; /* Adjusted width for better readability */
+            width: 100%;
             display: none;
-            text-align: center;
+        }
+
+        @keyframes colorChange {
+            0% { color: #FFEB3B; }
+            25% { color: #4CAF50; }
+            50% { color: #2196F3; }
+            75% { color: #FF9800; }
+            100% { color: #9C27B0; }
+        }
+
+        @keyframes scale {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
         }
     </style>
 </head>
@@ -37,38 +48,33 @@
     <div id="result"></div>
 
     <script>
-        function onScanSuccess(decodedText) {
-            var roundedPoints = Math.ceil(parseFloat(decodedText));
-            var totalPoints = Math.floor(Math.random() * 1000) + 1;
+        function onScanSuccess(decodedText, decodedResult) {
             var resultElement = document.getElementById('result');
-            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
+            resultElement.innerText = decodedText + ' Reward Points Redeemed!';
             resultElement.style.display = 'block';
             html5QrcodeScanner.clear();
         }
 
-        function onScanFailure(error) {
-            // handle scan failure, usually better to ignore and keep scanning.
-            console.warn(`QR code scan error: ${error}`);
+        function onCameraSelected(cameraId) {
+            html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
         }
 
-        let html5QrcodeScanner = new Html5Qrcode("reader");
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 10, qrbox: { width: window.innerWidth, height: window.innerHeight }, aspectRatio: 1 },
+            false
+        );
+
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
-                if (backCameraId) {
-                    html5QrcodeScanner.start(
-                        backCameraId, 
-                        {
-                            fps: 10,
-                            qrbox: { width: 250, height: 250 },
-                            aspectRatio: 1
-                        },
-                        onScanSuccess,
-                        onScanFailure
-                    );
-                } else {
-                    console.error("No back camera found!");
-                }
+                var cameraId = cameras[0].id; // Default to the first camera (usually the back camera on mobile devices)
+                // Use the facing mode to attempt to get the back camera
+                cameras.forEach(camera => {
+                    if (camera.facingMode === "environment") {
+                        cameraId = camera.id;
+                    }
+                });
+                onCameraSelected(cameraId);
             }
         }).catch(err => {
             console.error("Error getting cameras", err);
