@@ -12,6 +12,7 @@
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
+            overflow: hidden;
         }
 
         #reader {
@@ -20,26 +21,14 @@
         }
 
         #result {
-            font-size: 2em;
+            font-size: 4em;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
+            width: 80%;
             display: none;
-        }
-
-        @keyframes colorChange {
-            0% { color: #FFEB3B; }
-            25% { color: #4CAF50; }
-            50% { color: #2196F3; }
-            75% { color: #FF9800; }
-            100% { color: #9C27B0; }
-        }
-
-        @keyframes scale {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+            text-align: center;
         }
     </style>
 </head>
@@ -49,14 +38,12 @@
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
+            var roundedPoints = Math.ceil(parseFloat(decodedText));
+            var totalPoints = Math.floor(Math.random() * 1000) + 1;
             var resultElement = document.getElementById('result');
-            resultElement.innerText = decodedText + ' Reward Points Redeemed!';
+            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
             resultElement.style.display = 'block';
             html5QrcodeScanner.clear();
-        }
-
-        function onCameraSelected(cameraId) {
-            html5QrcodeScanner.render(onScanSuccess, { deviceId: cameraId });
         }
 
         var html5QrcodeScanner = new Html5QrcodeScanner(
@@ -65,20 +52,19 @@
             false
         );
 
-        Html5Qrcode.getCameras().then(cameras => {
-            if (cameras && cameras.length) {
-                var cameraId = cameras[0].id; // Default to the first camera (usually the back camera on mobile devices)
-                // Use the facing mode to attempt to get the back camera
-                cameras.forEach(camera => {
-                    if (camera.facingMode === "environment") {
-                        cameraId = camera.id;
-                    }
-                });
-                onCameraSelected(cameraId);
-            }
-        }).catch(err => {
-            console.error("Error getting cameras", err);
-        });
+        function startCamera() {
+            Html5Qrcode.getCameras().then(cameras => {
+                if (cameras && cameras.length) {
+                    var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id || cameras[0].id;
+                    html5QrcodeScanner.render(onScanSuccess, { deviceId: backCameraId });
+                }
+            }).catch(err => {
+                console.error("Error getting cameras", err);
+            });
+        }
+
+        // Start the camera as soon as the page loads
+        window.addEventListener('load', startCamera);
     </script>
 </body>
 </html>
