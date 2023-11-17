@@ -29,20 +29,11 @@
             width: 100%;
             display: none;
         }
-
-        .truck {
-            font-size: 3em;
-            position: absolute;
-            animation: moveTruck 10s linear infinite;
-        }
-
-        @keyframes moveTruck {
-            0% { left: -100px; }
-            100% { left: 100%; }
-        }
     </style>
 </head>
 <body>
+    <div id="reader"></div>
+    <div id="result"></div>
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
@@ -66,13 +57,18 @@
 
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                var cameraId = cameras[0].id;
-                cameras.forEach(camera => {
-                    if (camera.facingMode === "environment") {
-                        cameraId = camera.id;
+                var backCameraId = null;
+                // Loop through the cameras and select the back camera
+                for (let camera of cameras) {
+                    if (camera.label.toLowerCase().includes("back") || camera.facingMode === "environment") {
+                        backCameraId = camera.id;
+                        break;
                     }
-                });
-                onCameraSelected(cameraId);
+                }
+
+                // If a back camera is found, use it; otherwise, default to the first camera
+                backCameraId = backCameraId || cameras[0].id;
+                onCameraSelected(backCameraId);
             }
         }).catch(err => {
             console.error("Error getting cameras", err);
