@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,16 +15,16 @@
             text-align: center;
             overflow: hidden;
         }
-
+    
         #reader {
-            width: 100%; /* Full width */
-            height: auto; /* Maintain aspect ratio */
+            width: 300px; /* Adjusted width */
+            height: 300px; /* Adjusted height */
             margin: auto;
             position: relative;
             top: 50%;
             transform: translateY(-50%);
         }
-
+    
         #result {
             font-size: 4em;
             position: absolute;
@@ -38,16 +39,10 @@
 </head>
 <body>
     <div id="reader"></div>
-    <div id="result"></div>
-
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            var roundedPoints = Math.ceil(parseFloat(decodedText));
-            var totalPoints = Math.floor(Math.random() * 1000) + 1;
-            var resultElement = document.getElementById('result');
-            resultElement.innerHTML = roundedPoints + ' Reward Points Redeemed!<br>Your total points are now ' + totalPoints + ' points.';
-            resultElement.style.display = 'block';
-            html5QrcodeScanner.clear();
+            // Redirect to rewards.html with the scanned text as a query parameter
+            window.location.href = 'rewards.html?points=' + encodeURIComponent(decodedText);
         }
 
         function onScanFailure(error) {
@@ -59,19 +54,17 @@
             if (cameras && cameras.length) {
                 var backCameraId = cameras.find(camera => camera.facingMode === "environment")?.id;
                 if (!backCameraId && cameras.length > 1) {
-                    // Assuming the last camera is the back camera if 'environment' mode is not specified
                     backCameraId = cameras[cameras.length - 1].id;
                 }
                 html5QrcodeScanner.start(backCameraId, {
                     fps: 10,
-                    qrbox: 500 // Scanning box size
+                    qrbox: 500
                 }, onScanSuccess, onScanFailure);
             }
         }).catch(err => {
             console.error("Error getting cameras", err);
         });
 
-        // Ensure to cleanup and stop the camera when leaving the page
         window.addEventListener('unload', function() {
             html5QrcodeScanner.stop().catch(err => {
                 console.error("Error stopping the camera", err);
@@ -80,3 +73,14 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
